@@ -4,6 +4,7 @@ from states.state import State
 from states.etkultspill import EtKultSpill
 from states.mrpresident import MrPresident
 from states.CatchTheFallingBlock import CatchTheFallingBlock
+from states.SubToWaluigi import SubToWaluigi
 # Importer flere states her etter hvert som du lager dem
 # from states.annenstate import AnnenState
 
@@ -40,6 +41,7 @@ class MainMenu(State):
         self.states = [
             ("MrPresident", MrPresident),
             ("CatchTheFallingBlock", CatchTheFallingBlock),
+            ("SubToWaluigi", SubToWaluigi),
             ("EtKultSpill", EtKultSpill),
             # Legg til flere spill her!
         ]
