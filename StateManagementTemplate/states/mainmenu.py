@@ -37,30 +37,65 @@ class MainMenu(State):
         self.bg = pygame.image.load("StateManagementTemplate/assets/MainMenu_bg.png")
         self.bg = pygame.transform.scale(self.bg, (self.game.screen.get_width(), self.game.screen.get_height()))
         self.states = [
-            ("EtKultSpill", EtKultSpill), 
-            # ("Annen State", AnnenState),
+            ("MrPresident", MrPresident),
+            # Legg til flere spill her!
         ]
-        self.buttons = []
-        button_width = 250
+
+        # Layout-innstillinger
+        max_buttons_per_col = 5
+        num_states = len(self.states)
+        num_cols = max(1, (num_states + max_buttons_per_col - 1) // max_buttons_per_col)
+
+        spacing_x = 30
+        spacing_y = 10
+
+        # Beregn knappbredde slik at alle kolonner får plass
+        total_spacing_x = spacing_x * (num_cols - 1)
+        button_width = (self.game.screen.get_width() - total_spacing_x) // num_cols
         button_height = 60
-        spacing = 20
-        start_y = 120
-        for i, (name, _) in enumerate(self.states):
+
+        total_width = num_cols * button_width + total_spacing_x
+        start_x = (self.game.screen.get_width() - total_width) // 2
+        start_y = 100
+
+        self.buttons = []
+        for idx, (name, _) in enumerate(self.states):
+            col = idx // max_buttons_per_col
+            row = idx % max_buttons_per_col
             rect = (
-                (self.game.screen.get_width() - button_width) // 2,
-                start_y + i * (button_height + spacing),
+                start_x + col * (button_width + spacing_x),
+                start_y + row * (button_height + spacing_y),
                 button_width,
                 button_height
             )
             self.buttons.append(Button(rect, f"Start {name}", self.game.font))
-        self.selected_index = 0  # Hvilken knapp som er valgt med piltaster
+        self.selected_index = 0
 
     def update(self, actions, dt):
-        # PILTASTER: Oppdater valgt knapp
+        # PILTASTER: Opp/Ned/venstre/høyre
+        num_states = len(self.states)
+        max_buttons_per_col = 6
+        num_cols = max(1, (num_states + max_buttons_per_col - 1) // max_buttons_per_col)
+        num_rows = min(num_states, max_buttons_per_col)
+
+        col = self.selected_index // max_buttons_per_col
+        row = self.selected_index % max_buttons_per_col
+
         if actions["down"].pressed:
-            self.selected_index = (self.selected_index + 1) % len(self.buttons)
+            row = (row + 1) % min(num_rows, num_states - col * max_buttons_per_col)
         if actions["up"].pressed:
-            self.selected_index = (self.selected_index - 1) % len(self.buttons)
+            row = (row - 1) % min(num_rows, num_states - col * max_buttons_per_col)
+        if actions["right"].pressed and num_cols > 1:
+            col = (col + 1) % num_cols
+            # Juster rad hvis vi havner utenfor siste kolonne
+            if col * max_buttons_per_col + row >= num_states:
+                row = (num_states - 1) % max_buttons_per_col
+        if actions["left"].pressed and num_cols > 1:
+            col = (col - 1) % num_cols
+            if col * max_buttons_per_col + row >= num_states:
+                row = (num_states - 1) % max_buttons_per_col
+
+        self.selected_index = min(col * max_buttons_per_col + row, num_states - 1)
 
         # ENTER: Velg valgt knapp
         if actions["return"].pressed:
@@ -72,24 +107,23 @@ class MainMenu(State):
                 self.game.state = self.states[i][1](self.game)
                 break
 
-        # Hvis musen er over en knapp, marker den som valgt (men ikke hvis du nettopp brukte piltast)
-        mouse_over = False
+        # Hvis musen er over en knapp, marker den som valgt
         for i, button in enumerate(self.buttons):
             if button.is_hovered():
                 self.selected_index = i
-                mouse_over = True
                 break
 
         # Nullstill pressed-flagg
         actions["leftmouse"].pressed = False
         actions["up"].pressed = False
         actions["down"].pressed = False
+        actions["left"].pressed = False
+        actions["right"].pressed = False
         actions["return"].pressed = False
 
     def render(self, display):
         self.game.screen.blit(self.bg, (0, 0))
         for i, button in enumerate(self.buttons):
-            # Tegn ekstra ramme rundt valgt knapp
             if i == self.selected_index:
                 pygame.draw.rect(display, (255,255,0), button.rect.inflate(8,8), 4)  # Gul ramme
             button.draw(display)
