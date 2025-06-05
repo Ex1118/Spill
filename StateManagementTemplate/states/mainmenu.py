@@ -17,12 +17,12 @@ class Button:
         self.color = color
         self.hover_color = hover_color
 
-    def draw(self, surface):
+    def draw(self, surface, selected=False):
         mouse_pos = pygame.mouse.get_pos()
         is_hover = self.rect.collidepoint(mouse_pos)
-        # Tegn knapp
-        pygame.draw.rect(surface, self.hover_color if is_hover else self.color, self.rect)
-        # Tegn hvit ramme
+        # Bruk hover_color hvis mus over ELLER hvis valgt med tastatur
+        active = is_hover or selected
+        pygame.draw.rect(surface, self.hover_color if active else self.color, self.rect)
         pygame.draw.rect(surface, (255, 255, 255), self.rect, 3)
         text_surf = self.font.render(self.text, True, self.text_color)
         text_rect = text_surf.get_rect(center=self.rect.center)
@@ -77,30 +77,52 @@ class MainMenu(State):
         self.selected_index = 0
 
     def update(self, actions, dt):
-        # PILTASTER: Opp/Ned/venstre/høyre 
         num_states = len(self.states)
-        max_buttons_per_col = 6
+        max_buttons_per_col = 5
         num_cols = max(1, (num_states + max_buttons_per_col - 1) // max_buttons_per_col)
-        num_rows = min(num_states, max_buttons_per_col)
+        num_rows = max_buttons_per_col
 
+        # Finn nåværende rad og kolonne
         col = self.selected_index // max_buttons_per_col
         row = self.selected_index % max_buttons_per_col
 
-        if actions["down"].pressed:
-            row = (row + 1) % min(num_rows, num_states - col * max_buttons_per_col)
-        if actions["up"].pressed:
-            row = (row - 1) % min(num_rows, num_states - col * max_buttons_per_col)
-        if actions["right"].pressed and num_cols > 1:
-            col = (col + 1) % num_cols
-            # Juster rad hvis vi havner utenfor siste kolonne
-            if col * max_buttons_per_col + row >= num_states:
-                row = (num_states - 1) % max_buttons_per_col
-        if actions["left"].pressed and num_cols > 1:
-            col = (col - 1) % num_cols
-            if col * max_buttons_per_col + row >= num_states:
-                row = (num_states - 1) % max_buttons_per_col
+        # Finn antall rader i denne kolonnen
+        def col_length(c):
+            if c == num_cols - 1:
+                # Siste kolonne kan ha færre knapper
+                return num_states - c * max_buttons_per_col
+            return max_buttons_per_col
 
-        self.selected_index = min(col * max_buttons_per_col + row, num_states - 1)
+        # Navigasjon ned
+        if actions["down"].pressed:
+            if row + 1 < col_length(col):
+                row += 1
+            else:
+                row = 0  # Gå til toppen av kolonnen
+
+        # Navigasjon opp
+        if actions["up"].pressed:
+            if row - 1 >= 0:
+                row -= 1
+            else:
+                row = col_length(col) - 1  # Gå til bunnen av kolonnen
+
+        # Navigasjon høyre
+        if actions["right"].pressed and num_cols > 1:
+            new_col = (col + 1) % num_cols
+            # Juster rad hvis ny kolonne er kortere
+            new_row = min(row, col_length(new_col) - 1)
+            col, row = new_col, new_row
+
+        # Navigasjon venstre
+        if actions["left"].pressed and num_cols > 1:
+            new_col = (col - 1) % num_cols
+            new_row = min(row, col_length(new_col) - 1)
+            col, row = new_col, new_row
+
+        self.selected_index = col * max_buttons_per_col + row
+        if self.selected_index >= num_states:
+            self.selected_index = num_states - 1
 
         # ENTER: Velg valgt knapp
         if actions["return"].pressed:
@@ -131,4 +153,4 @@ class MainMenu(State):
         for i, button in enumerate(self.buttons):
             if i == self.selected_index:
                 pygame.draw.rect(display, (255,255,0), button.rect.inflate(8,8), 4)  # Gul ramme
-            button.draw(display)
+            button.draw(display, i == self.selected_index)
