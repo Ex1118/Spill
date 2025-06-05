@@ -51,7 +51,7 @@ class MainMenu(State):
 
         # Beregn knappbredde slik at alle kolonner får plass
         total_spacing_x = spacing_x * (num_cols - 1)
-        button_width = (self.game.screen.get_width() - total_spacing_x) // num_cols
+        button_width = min(200, (self.game.screen.get_width() - total_spacing_x) // num_cols)
         button_height = 60
 
         total_width = num_cols * button_width + total_spacing_x
