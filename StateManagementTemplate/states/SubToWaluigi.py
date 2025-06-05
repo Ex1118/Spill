@@ -60,7 +60,7 @@ class SubToWaluigi(State):
         self.objects.append(Object((self.game.screen.get_width()//self.game_size*random.randint(0, self.game_size-1), self.game.screen.get_height()//self.game_size*random.randint(0, self.game_size-1)), (110, 50), f"Comment", color="green"))
         self.objects.append(Object((self.game.screen.get_width()//self.game_size*random.randint(0, self.game_size-1), self.game.screen.get_height()//self.game_size*random.randint(0, self.game_size-1)), (110, 50), f"Notifcation", color="yellow"))
         self.player = Player([self.game.screen.get_width() // 2, self.game.screen.get_height() //1.1], (50, 50), "Wario", color=(255, 255, 0))
-    
+        self.waluigi_surface = pygame.image.load("StateManagementTemplate/assets/SubToWaluigi/WaluigiYT.png").convert()
     def draw_text(self, surface, string: str, color: pygame.Color, center: tuple, tekst_size: int = 24):
         font = pygame.font.Font(None, tekst_size)
         text_surf = font.render(string, False, (255, 255, 255)) # Tekst
@@ -108,7 +108,7 @@ class SubToWaluigi(State):
 
 
     def render(self, display):
-        display.blit(pygame.transform.scale(pygame.image.load("StateManagementTemplate/assets/SubToWaluigi/WaluigiYT.png").convert(), (self.game.screen.get_width(), self.game.screen.get_height())), (0, 0))
+        display.blit(pygame.transform.scale(self.waluigi_surface, (self.game.screen.get_width(), self.game.screen.get_height())), (0, 0))
         self.draw_text(display, f"Hit dat sub button Wario på: {abs(3-self.counter):.1f} s (trykk ESC for å gå tilbake)", (123, 4, 20), (self.game.screen.get_width() // 2, 20))
         self.draw_text(display, f"Trykk SPACE for å trykke", (123, 4, 20), (self.game.screen.get_width() // 2, self.game.screen.get_height() - 20))
         for obj in self.objects:
