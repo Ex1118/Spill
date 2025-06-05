@@ -97,11 +97,11 @@ class SubToWaluigi(State):
                 i.color = (255, 50, 50) if i.tekst == "Subscribe" else (50, 50, 255) if i.tekst == "Like" else (255, 255, 50) if i.tekst == "Notifcation" else (255, 255, 255)
             else:
                 i.color = (255, 0, 0) if i.tekst == "Subscribe" else (0, 0, 255) if i.tekst == "Like" else (255, 255, 0) if i.tekst == "Notifcation" else (200, 200, 200)
-            if actions["1"].pressed and self.player.rect.colliderect(i.rect):
+            if actions["action"].pressed and self.player.rect.colliderect(i.rect):
                 self.objects.remove(i)
-                self.game.actions["1"].pressed = False
-        if actions["1"].pressed:
-            self.game.actions["1"].pressed = False
+                self.game.actions["action"].pressed = False
+        if actions["action"].pressed:
+            self.game.actions["action"].pressed = False
         # Update player
         self.player.update(actions, dt)
         self.counter += dt
@@ -110,7 +110,7 @@ class SubToWaluigi(State):
     def render(self, display):
         display.blit(pygame.transform.scale(pygame.image.load("StateManagementTemplate/assets/SubToWaluigi/WaluigiYT.png").convert(), (self.game.screen.get_width(), self.game.screen.get_height())), (0, 0))
         self.draw_text(display, f"Hit dat sub button Wario på: {abs(3-self.counter):.1f} s (trykk ESC for å gå tilbake)", (123, 4, 20), (self.game.screen.get_width() // 2, 20))
-        self.draw_text(display, f"Trykk 1 for å trykke", (123, 4, 20), (self.game.screen.get_width() // 2, self.game.screen.get_height() - 20))
+        self.draw_text(display, f"Trykk SPACE for å trykke", (123, 4, 20), (self.game.screen.get_width() // 2, self.game.screen.get_height() - 20))
         for obj in self.objects:
             obj.render(display)
         self.player.render(display)
