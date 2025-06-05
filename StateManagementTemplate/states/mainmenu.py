@@ -75,7 +75,7 @@ class MainMenu(State):
         self.selected_index = 0
 
     def update(self, actions, dt):
-        # PILTASTER: Opp/Ned/venstre/høyre
+        # PILTASTER: Opp/Ned/venstre/høyre 
         num_states = len(self.states)
         max_buttons_per_col = 6
         num_cols = max(1, (num_states + max_buttons_per_col - 1) // max_buttons_per_col)
