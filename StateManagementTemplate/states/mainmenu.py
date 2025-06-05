@@ -3,6 +3,7 @@ import pygame.freetype
 from states.state import State
 from states.etkultspill import EtKultSpill
 from states.mrpresident import MrPresident
+from states.CatchTheFallingBlock import CatchTheFallingBlock
 # Importer flere states her etter hvert som du lager dem
 # from states.annenstate import AnnenState
 
@@ -38,6 +39,8 @@ class MainMenu(State):
         self.bg = pygame.transform.scale(self.bg, (self.game.screen.get_width(), self.game.screen.get_height()))
         self.states = [
             ("MrPresident", MrPresident),
+            ("CatchTheFallingBlock", CatchTheFallingBlock),
+            ("EtKultSpill", EtKultSpill),
             # Legg til flere spill her!
         ]
 
@@ -68,7 +71,7 @@ class MainMenu(State):
                 button_width,
                 button_height
             )
-            self.buttons.append(Button(rect, f"Start {name}", self.game.font))
+            self.buttons.append(Button(rect, f"{name}", self.game.font))
         self.selected_index = 0
 
     def update(self, actions, dt):
