@@ -14,9 +14,9 @@ class CatchTheFallingBlock(State):
             [self.pos+30, self.game.screen.get_height()-100, 10, 80],
             [self.pos-30, self.game.screen.get_height()-20, 70, 10],
         ]
-        self.object_pos_x = random.randint(20, self.game.screen.get_width()-20)
+        self.object_pos_x = random.randint(20, self.game.screen.get_width()-50)
         self.object = [self.object_pos_x, 0, 20 , 20]
-        self.object_speed = 180
+        self.object_speed = 400
         
     def update(self, actions, dt):
         if actions["escape"].pressed or self.ended:
@@ -28,20 +28,20 @@ class CatchTheFallingBlock(State):
             for rect in self.box:
                 if self.pos > 30:
                     
-                    rect[0] -= 200*dt 
+                    rect[0] -= 600*dt 
                     
             if self.pos > 30:
-                self.pos -= 200*dt
+                self.pos -= 600*dt
                 
                 
                 
         if actions["right"].held and not self.fail and not self.side_hit:
             for rect in self.box:
                 if self.pos < self.game.screen.get_width()-40:
-                    rect[0] += 200*dt 
+                    rect[0] += 600*dt 
                     
             if self.pos < self.game.screen.get_width()-40:
-                self.pos += 200*dt 
+                self.pos += 600*dt 
                     
         ting1 = pygame.Rect(self.box[0])
         ting2 = pygame.Rect(self.box[1])
