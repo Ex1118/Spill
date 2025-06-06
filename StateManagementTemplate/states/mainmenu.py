@@ -126,6 +126,7 @@ class MainMenu(State):
 
         # ENTER: Velg valgt knapp
         if actions["return"].pressed:
+            self.game.reset_actions()  # Nullstill actions før vi bytter state
             self.game.state = self.states[self.selected_index][1](self.game)
 
         # MUSEKLIKK: Sjekk om noen knapp er klikket

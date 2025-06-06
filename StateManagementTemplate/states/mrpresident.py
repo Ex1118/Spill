@@ -105,6 +105,7 @@ class MrPresident(State):
         else:
             if time.time() - self.time > 1.0:
                 self.game.font = pygame.font.SysFont(None, 22)
+                self.game.reset_actions()
                 self.game.state = self.game.main_menu
     
     
