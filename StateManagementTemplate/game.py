@@ -9,13 +9,12 @@ class Game:
         self.running = True
         self.screen = pygame.display.set_mode((500, 500))
         self.dt, self.prev_time = 0, 0
+        self.main_menu = MainMenu(self)
+        self.state = self.main_menu
         self.mouse_pos = pygame.mouse.get_pos()
         self.mouse_asleep = True
-
-        self.set_up_actions()           # <-- Først opprett actions
-        self.main_menu = MainMenu(self) # <-- Så lag MainMenu
-        self.state = self.main_menu
-        self.reset_actions()            # <-- Nå kan du trygt kalle reset_actions()
+        
+        self.set_up_actions()
 
     def set_up_actions(self):
         self.actions = {
